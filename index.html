@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f2ede5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Packa" />
+  <title>Packa</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">PACKLISTA</div>
+        <h1>Packa</h1>
+      </div>
+      <button id="installButton" class="ghost-button hidden" type="button">Installera</button>
+    </header>
+
+    <main>
+      <section id="view-trip" class="view active" aria-labelledby="trip-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">NY RESA</p>
+            <h2 id="trip-title">Vart ska du?</h2>
+          </div>
+        </div>
+
+        <form id="tripForm" class="card form-card">
+          <div class="field">
+            <label for="destination">Destination</label>
+            <input id="destination" name="destination" type="text" autocomplete="off" placeholder="t.ex. Köpenhamn" required />
+            <div id="destinationHint" class="field-hint"></div>
+          </div>
+
+          <div class="two-col">
+            <div class="field">
+              <label for="departureDate">Avresa</label>
+              <input id="departureDate" name="departureDate" type="date" required />
+            </div>
+            <div class="field">
+              <label for="returnDate">Hemkomst</label>
+              <input id="returnDate" name="returnDate" type="date" required />
+            </div>
+          </div>
+
+          <fieldset class="field-group">
+            <legend>Vem följer med?</legend>
+            <div class="choice-grid">
+              <label class="choice"><input type="checkbox" name="travelers" value="Isolde" /><span>Isolde</span></label>
+              <label class="choice"><input type="checkbox" name="travelers" value="Alex" /><span>Alex</span></label>
+              <label class="choice"><input type="checkbox" name="travelers" value="Other" /><span>Annan vuxen</span></label>
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <label for="accommodation">Boende</label>
+            <select id="accommodation" name="accommodation" required>
+              <option value="">Välj boende</option>
+              <option value="hotel">Hotell</option>
+              <option value="cabin_airbnb">Stuga eller Airbnb</option>
+              <option value="home">Hemma hos</option>
+            </select>
+          </div>
+
+          <div id="linensField" class="field conditional-field hidden">
+            <label for="linensProvided">Ingår lakan och handdukar?</label>
+            <select id="linensProvided" name="linensProvided">
+              <option value="">Välj</option>
+              <option value="true">Ja</option>
+              <option value="false">Nej</option>
+            </select>
+          </div>
+
+          <div class="two-col">
+            <div class="field">
+              <label for="transportMode">Transportmedel</label>
+              <select id="transportMode" name="transportMode" required>
+                <option value="">Välj</option>
+                <option value="car">Bil</option>
+                <option value="train">Tåg</option>
+                <option value="plane">Flyg</option>
+                <option value="bus">Buss</option>
+                <option value="bike">Cykel</option>
+                <option value="other">Annat</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="travelHours">Restid, timmar</label>
+              <input id="travelHours" name="travelHours" type="number" min="0" step="0.25" inputmode="decimal" placeholder="3,5" required />
+            </div>
+          </div>
+
+          <fieldset class="field-group">
+            <legend>Aktiviteter</legend>
+            <div class="choice-grid activities">
+              <label class="choice"><input type="checkbox" name="activities" value="cycling" /><span>Cykling</span></label>
+              <label class="choice"><input type="checkbox" name="activities" value="gym" /><span>Gym</span></label>
+              <label class="choice"><input type="checkbox" name="activities" value="swimming" /><span>Bad</span></label>
+              <label class="choice"><input type="checkbox" name="activities" value="work" /><span>Jobb</span></label>
+              <label class="choice"><input type="checkbox" name="activities" value="party" /><span>Fest</span></label>
+            </div>
+          </fieldset>
+
+          <div class="two-col toggles-row">
+            <label class="toggle-card">
+              <input type="checkbox" id="period" name="period" />
+              <span><strong>Mens</strong><small>under resan</small></span>
+            </label>
+            <label class="toggle-card">
+              <input type="checkbox" id="fertileDays" name="fertileDays" />
+              <span><strong>Fertila dagar</strong><small>under resan</small></span>
+            </label>
+          </div>
+
+          <div id="formError" class="message error hidden" role="alert"></div>
+          <button id="generateButton" class="primary-button" type="submit">Generera packlista</button>
+          <div id="generateStatus" class="status-line" aria-live="polite"></div>
+        </form>
+
+        <section id="recentTripsSection" class="recent-section hidden">
+          <div class="section-heading compact">
+            <div><p class="eyebrow">SPARAT PÅ DEN HÄR ENHETEN</p><h3>Tidigare resor</h3></div>
+          </div>
+          <div id="recentTrips" class="recent-trips"></div>
+        </section>
+      </section>
+
+      <section id="view-list" class="view" aria-labelledby="list-title">
+        <div class="section-heading list-heading">
+          <div>
+            <p id="tripMeta" class="eyebrow"></p>
+            <h2 id="list-title">Packlista</h2>
+          </div>
+          <button id="editTripButton" class="ghost-button" type="button">Ändra resa</button>
+        </div>
+
+        <div id="weatherSummary" class="weather-summary hidden"></div>
+        <div id="packingProgress" class="progress-card hidden"></div>
+        <div id="packingList" class="packing-list"></div>
+
+        <form id="extraItemForm" class="card extra-form">
+          <h3>Lägg till något extra</h3>
+          <div class="extra-grid">
+            <input id="extraItemName" aria-label="Sak" placeholder="Sak" required />
+            <select id="extraItemWhere" aria-label="Var finns saken hemma"></select>
+            <select id="extraItemPerson" aria-label="Vems sak">
+              <option value="Kajsa">Kajsa</option>
+              <option value="Isolde">Isolde</option>
+            </select>
+            <button class="secondary-button" type="submit">Lägg till</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="view-settings" class="view" aria-labelledby="settings-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">MASTERLISTA</p><h2 id="settings-title">Inställningar</h2></div>
+          <button id="addRuleButton" class="primary-button small" type="button">+ Ny regel</button>
+        </div>
+
+        <div class="card rule-help">
+          <details>
+            <summary>Hur fungerar villkoren?</summary>
+            <p><code>Person</code> är bara vem saken tillhör. <code>When</code> kan ändå bero på vem som följer med.</p>
+            <p>Exempel: <code>nights &gt; 2</code>, <code>travel_hours &gt; 3</code>, <code>rainy</code>, <code>activity("gym")</code>, <code>traveler("Isolde")</code>, <code>accommodation == "hotel"</code>, <code>NOT linens_provided</code>.</p>
+            <p>Vädervariabler (temperaturerna bygger på varje dags maxtemperatur, inte nattens minimum): <code>min_day_temp</code>, <code>max_day_temp</code>, <code>rainy</code>, <code>sunny</code>. Mängd kan t.ex. vara <code>nights + 1</code> eller <code>ceil(nights * 1.5)</code>.</p>
+          </details>
+        </div>
+
+        <div class="settings-toolbar">
+          <input id="ruleSearch" type="search" placeholder="Sök sak, plats eller villkor" aria-label="Sök regler" />
+          <button id="resetRulesButton" class="ghost-button danger-text" type="button">Återställ standard</button>
+        </div>
+        <div id="ruleValidationSummary" class="message error hidden"></div>
+        <div id="rulesList" class="rules-list"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Huvudnavigation">
+      <button class="nav-button active" data-view="trip" type="button"><span class="nav-icon">↗</span><span>Resa</span></button>
+      <button class="nav-button" data-view="list" type="button"><span class="nav-icon">✓</span><span>Packlista</span></button>
+      <button class="nav-button" data-view="settings" type="button"><span class="nav-icon">⚙</span><span>Regler</span></button>
+    </nav>
+  </div>
+
+  <template id="ruleTemplate">
+    <article class="rule-card card">
+      <div class="rule-card-top">
+        <input class="rule-item" aria-label="Sak" />
+        <button class="icon-button delete-rule" type="button" aria-label="Ta bort regel">×</button>
+      </div>
+      <div class="rule-fields">
+        <label>Person<select class="rule-person"><option>Kajsa</option><option>Isolde</option></select></label>
+        <label>Var<input class="rule-where" /></label>
+        <label class="wide">When<input class="rule-when code-input" spellcheck="false" /></label>
+        <label class="wide">Quantity<input class="rule-quantity code-input" spellcheck="false" /></label>
+      </div>
+      <div class="rule-error hidden"></div>
+    </article>
+  </template>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

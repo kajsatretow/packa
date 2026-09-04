@@ -1,0 +1,746 @@
+[
+  {
+    "item": "Jacka",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-1"
+  },
+  {
+    "item": "Hörlurar",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-2"
+  },
+  {
+    "item": "Mobilladdare",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-3"
+  },
+  {
+    "item": "Medicin",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-4"
+  },
+  {
+    "item": "Mjukisbyxor",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Garderoben",
+    "id": "default-5"
+  },
+  {
+    "item": "Hårborste",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-6"
+  },
+  {
+    "item": "Necessär",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-7"
+  },
+  {
+    "item": "Hårsnoddar",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-8"
+  },
+  {
+    "item": "Trosskydd",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "nights + 1",
+    "where": "Badrummet",
+    "id": "default-9"
+  },
+  {
+    "item": "Bulkmedel",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "nights",
+    "where": "Köket",
+    "id": "default-10"
+  },
+  {
+    "item": "Pyjamas",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Garderoben",
+    "id": "default-11"
+  },
+  {
+    "item": "Bok",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-12"
+  },
+  {
+    "item": "Sovmask",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-13"
+  },
+  {
+    "item": "BH:ar",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Garderoben",
+    "id": "default-14"
+  },
+  {
+    "item": "Påse till smutstvätt",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-15"
+  },
+  {
+    "item": "Tjocktröjor",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Garderoben",
+    "id": "default-16"
+  },
+  {
+    "item": "Öronproppar",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-17"
+  },
+  {
+    "item": "Outfit",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "nights + 1",
+    "where": "Garderoben",
+    "id": "default-18"
+  },
+  {
+    "item": "Strumpor & strumpbyxor",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "nights + 1",
+    "where": "Garderoben",
+    "id": "default-19"
+  },
+  {
+    "item": "Trosor",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "nights + 1",
+    "where": "Garderoben",
+    "id": "default-20"
+  },
+  {
+    "item": "Solglasögon",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-21"
+  },
+  {
+    "item": "Plackers",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-22"
+  },
+  {
+    "item": "Värktabletter",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-23"
+  },
+  {
+    "item": "Läppbalsam",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-24"
+  },
+  {
+    "item": "Plåster",
+    "person": "Kajsa",
+    "when": "always",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-25"
+  },
+  {
+    "item": "Solkräm",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-26"
+  },
+  {
+    "item": "Paraply",
+    "person": "Kajsa",
+    "when": "rainy",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-27"
+  },
+  {
+    "item": "Vattenflaska",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-28"
+  },
+  {
+    "item": "Gosedjur",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-29"
+  },
+  {
+    "item": "Pyjamas",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Byrån",
+    "id": "default-30"
+  },
+  {
+    "item": "Böcker",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Isoldes rum",
+    "id": "default-31"
+  },
+  {
+    "item": "Våtservetter",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-32"
+  },
+  {
+    "item": "Leksaker",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Isoldes rum",
+    "id": "default-33"
+  },
+  {
+    "item": "Extrakläder",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Byrån",
+    "id": "default-34"
+  },
+  {
+    "item": "Hårsnoddar/hårklämmor",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Isoldes rum",
+    "id": "default-35"
+  },
+  {
+    "item": "Tjocktröjor",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Byrån",
+    "id": "default-36"
+  },
+  {
+    "item": "Lelleflaska",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-37"
+  },
+  {
+    "item": "Ersättning",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-38"
+  },
+  {
+    "item": "Strumpor",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "nights + 1",
+    "where": "Byrån",
+    "id": "default-39"
+  },
+  {
+    "item": "Outfits",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "nights + 1",
+    "where": "Byrån",
+    "id": "default-40"
+  },
+  {
+    "item": "Trosor",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Byrån",
+    "id": "default-41"
+  },
+  {
+    "item": "Necessär",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-42"
+  },
+  {
+    "item": "Febertermometer",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-43"
+  },
+  {
+    "item": "Jacka",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-44"
+  },
+  {
+    "item": "Blöjor",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "ceil(nights * 1.5)",
+    "where": "Sovrummet",
+    "id": "default-45"
+  },
+  {
+    "item": "Cykellampor",
+    "person": "Kajsa",
+    "when": "activity(\"cycling\")",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-46"
+  },
+  {
+    "item": "Cykelhjälm",
+    "person": "Isolde",
+    "when": "activity(\"cycling\")",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-47"
+  },
+  {
+    "item": "Nycklar",
+    "person": "Kajsa",
+    "when": "destination == \"Lund\"",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-48"
+  },
+  {
+    "item": "Gymgrejer",
+    "person": "Kajsa",
+    "when": "activity(\"gym\")",
+    "quantity": "1",
+    "where": "Garderoben",
+    "id": "default-49"
+  },
+  {
+    "item": "Flaskborste",
+    "person": "Isolde",
+    "when": "destination != \"Lund\"",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-50"
+  },
+  {
+    "item": "Regnkläder",
+    "person": "Kajsa",
+    "when": "traveler(\"Isolde\") AND rainy",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-51"
+  },
+  {
+    "item": "Mus",
+    "person": "Kajsa",
+    "when": "activity(\"work\")",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-52"
+  },
+  {
+    "item": "Laptop",
+    "person": "Kajsa",
+    "when": "activity(\"work\")",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-53"
+  },
+  {
+    "item": "Skärmadapter",
+    "person": "Kajsa",
+    "when": "activity(\"work\")",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-54"
+  },
+  {
+    "item": "Laptopsladd",
+    "person": "Kajsa",
+    "when": "activity(\"work\")",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-55"
+  },
+  {
+    "item": "Resesnacks",
+    "person": "Kajsa",
+    "when": "travel_hours > 3",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-56"
+  },
+  {
+    "item": "Snacks",
+    "person": "Isolde",
+    "when": "always",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-57"
+  },
+  {
+    "item": "Epilator",
+    "person": "Kajsa",
+    "when": "nights > 14",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-58"
+  },
+  {
+    "item": "Balsam",
+    "person": "Kajsa",
+    "when": "nights > 2",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-59"
+  },
+  {
+    "item": "Schampo",
+    "person": "Kajsa",
+    "when": "nights > 2",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-60"
+  },
+  {
+    "item": "Toalettsits",
+    "person": "Isolde",
+    "when": "nights > 2",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-61"
+  },
+  {
+    "item": "Nagelklippare",
+    "person": "Isolde",
+    "when": "nights > 7",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-62"
+  },
+  {
+    "item": "Godis",
+    "person": "Isolde",
+    "when": "trip_has_weekday(\"Saturday\")",
+    "quantity": "1",
+    "where": "Köket",
+    "id": "default-63"
+  },
+  {
+    "item": "Mensskydd",
+    "person": "Kajsa",
+    "when": "period",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-64"
+  },
+  {
+    "item": "Smink",
+    "person": "Kajsa",
+    "when": "activity(\"party\")",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-65"
+  },
+  {
+    "item": "Extra skor",
+    "person": "Kajsa",
+    "when": "activity(\"party\")",
+    "quantity": "1",
+    "where": "Garderoben",
+    "id": "default-66"
+  },
+  {
+    "item": "Parfym",
+    "person": "Kajsa",
+    "when": "activity(\"party\")",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-67"
+  },
+  {
+    "item": "Gummistövlar",
+    "person": "Isolde",
+    "when": "rainy",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-68"
+  },
+  {
+    "item": "Regnkläder",
+    "person": "Isolde",
+    "when": "rainy",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-69"
+  },
+  {
+    "item": "Sandaler",
+    "person": "Kajsa",
+    "when": "max_day_temp > 20 AND nights > 2",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-70"
+  },
+  {
+    "item": "Bikini/baddräkt",
+    "person": "Kajsa",
+    "when": "max_day_temp > 22 OR activity(\"swimming\")",
+    "quantity": "1",
+    "where": "Garderoben",
+    "id": "default-71"
+  },
+  {
+    "item": "Badhandduk",
+    "person": "Kajsa",
+    "when": "max_day_temp > 22 OR activity(\"swimming\")",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-72"
+  },
+  {
+    "item": "Snorkelset",
+    "person": "Kajsa",
+    "when": "season == \"summer\"",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-73"
+  },
+  {
+    "item": "UV-dräkter",
+    "person": "Isolde",
+    "when": "max_day_temp > 22 OR activity(\"swimming\")",
+    "quantity": "1",
+    "where": "Byrån",
+    "id": "default-74"
+  },
+  {
+    "item": "Badrock",
+    "person": "Isolde",
+    "when": "max_day_temp > 22 OR activity(\"swimming\")",
+    "quantity": "1",
+    "where": "Byrån",
+    "id": "default-75"
+  },
+  {
+    "item": "Keps",
+    "person": "Isolde",
+    "when": "min_day_temp > 9 AND sunny",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-76"
+  },
+  {
+    "item": "Solhatt",
+    "person": "Isolde",
+    "when": "min_day_temp > 9 AND sunny",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-77"
+  },
+  {
+    "item": "Sandaler",
+    "person": "Isolde",
+    "when": "max_day_temp > 20",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-78"
+  },
+  {
+    "item": "Badhandduk",
+    "person": "Isolde",
+    "when": "max_day_temp > 22 OR activity(\"swimming\")",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-79"
+  },
+  {
+    "item": "Sällskapsspel",
+    "person": "Kajsa",
+    "when": "traveler(\"Alex\") OR traveler(\"Other\")",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-80"
+  },
+  {
+    "item": "Lakan",
+    "person": "Kajsa",
+    "when": "NOT linens_provided",
+    "quantity": "1",
+    "where": "Garderoben",
+    "id": "default-81"
+  },
+  {
+    "item": "Stor handduk",
+    "person": "Kajsa",
+    "when": "NOT linens_provided",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-82"
+  },
+  {
+    "item": "Fleece",
+    "person": "Isolde",
+    "when": "min_day_temp < 15",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-83"
+  },
+  {
+    "item": "Skalbyxor",
+    "person": "Isolde",
+    "when": "min_day_temp < 10 OR (min_day_temp < 15 AND rainy)",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-84"
+  },
+  {
+    "item": "Mössor",
+    "person": "Isolde",
+    "when": "min_day_temp < 10",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-85"
+  },
+  {
+    "item": "Vantar",
+    "person": "Isolde",
+    "when": "min_day_temp < 10",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-86"
+  },
+  {
+    "item": "Overall",
+    "person": "Isolde",
+    "when": "min_day_temp < 5",
+    "quantity": "1",
+    "where": "Hallen",
+    "id": "default-87"
+  },
+  {
+    "item": "Fotfil",
+    "person": "Kajsa",
+    "when": "trip_has_weekday(\"Tuesday\")",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-88"
+  },
+  {
+    "item": "Rakhyvel",
+    "person": "Kajsa",
+    "when": "trip_has_weekday(\"Thursday\")",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-89"
+  },
+  {
+    "item": "Raklödder",
+    "person": "Kajsa",
+    "when": "trip_has_weekday(\"Thursday\")",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-90"
+  },
+  {
+    "item": "Pass",
+    "person": "Kajsa",
+    "when": "abroad",
+    "quantity": "1",
+    "where": "Sovrummet",
+    "id": "default-91"
+  },
+  {
+    "item": "Ägglossningstest",
+    "person": "Kajsa",
+    "when": "fertile_days",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-92"
+  },
+  {
+    "item": "Mojäng",
+    "person": "Kajsa",
+    "when": "fertile_days",
+    "quantity": "1",
+    "where": "Badrummet",
+    "id": "default-93"
+  }
+]

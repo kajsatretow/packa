@@ -51,11 +51,8 @@
 
           <fieldset class="field-group">
             <legend>Vem följer med?</legend>
-            <div class="choice-grid">
-              <label class="choice"><input type="checkbox" name="travelers" value="Isolde" /><span>Isolde</span></label>
-              <label class="choice"><input type="checkbox" name="travelers" value="Alex" /><span>Alex</span></label>
-              <label class="choice"><input type="checkbox" name="travelers" value="Other" /><span>Annan vuxen</span></label>
-            </div>
+            <div id="travelersChoices" class="choice-grid"></div>
+            <div id="travelersHint" class="field-hint hidden">Lägg till personer under Inställningar → Personer för fler val här.</div>
           </fieldset>
 
           <div class="field">
@@ -149,10 +146,7 @@
           <div class="extra-grid">
             <input id="extraItemName" aria-label="Sak" placeholder="Sak" required />
             <select id="extraItemWhere" aria-label="Var finns saken hemma"></select>
-            <select id="extraItemPerson" aria-label="Vems sak">
-              <option value="Kajsa">Kajsa</option>
-              <option value="Isolde">Isolde</option>
-            </select>
+            <select id="extraItemPerson" aria-label="Vems sak"></select>
             <button class="secondary-button" type="submit">Lägg till</button>
           </div>
         </form>
@@ -167,17 +161,49 @@
         <div class="card rule-help">
           <details>
             <summary>Hur fungerar villkoren?</summary>
-            <p><code>Person</code> är bara vem saken tillhör. <code>When</code> kan ändå bero på vem som följer med.</p>
-            <p>Exempel: <code>nights &gt; 2</code>, <code>travel_hours &gt; 3</code>, <code>rainy</code>, <code>activity("gym")</code>, <code>traveler("Isolde")</code>, <code>accommodation == "hotel"</code>, <code>NOT linens_provided</code>.</p>
+            <p><code>Person</code> avgör vem saken tillhör. Om personen inte är ägaren (dig) tas saken bara med när den personen är vald som reskamrat på resan – det sker automatiskt, du behöver inte skriva ett eget villkor för det.</p>
+            <p><code>When</code> kan ändå användas för mer specifika villkor, t.ex. att en av dina egna saker bara ska med när en viss reskamrat är med: <code>traveler("Namn")</code>.</p>
+            <p>Fler exempel: <code>nights &gt; 2</code>, <code>travel_hours &gt; 3</code>, <code>rainy</code>, <code>activity("gym")</code>, <code>accommodation == "hotel"</code>, <code>NOT linens_provided</code>.</p>
             <p>Vädervariabler (temperaturerna bygger på varje dags maxtemperatur, inte nattens minimum): <code>min_day_temp</code>, <code>max_day_temp</code>, <code>rainy</code>, <code>sunny</code>. Mängd kan t.ex. vara <code>nights + 1</code> eller <code>ceil(nights * 1.5)</code>.</p>
           </details>
         </div>
 
+        <div class="card people-section">
+          <div class="people-header">
+            <h3>Personer</h3>
+            <button id="addPersonButton" class="secondary-button small" type="button">+ Ny person</button>
+          </div>
+          <p class="field-hint">Personer styr vem som kan äga packsaker (fältet "Person" på en regel) och vem som kan väljas som reskamrat på en resa. En person markerad som ägare (du) behöver inte väljas som reskamrat – deras saker tas alltid med när regeln matchar.</p>
+          <div id="peopleEmptyState" class="field-hint hidden">Inga personer ännu. Lägg till dig själv som ägare, och eventuella andra som ofta packar egna saker eller reser med dig.</div>
+          <div id="peopleList" class="people-list"></div>
+        </div>
+        <div id="noOwnerWarning" class="message warning hidden"></div>
+        <div id="unconfiguredPeopleWarning" class="message warning hidden"></div>
+
         <div class="settings-toolbar">
           <input id="ruleSearch" type="search" placeholder="Sök sak, plats eller villkor" aria-label="Sök regler" />
-          <button id="resetRulesButton" class="ghost-button danger-text" type="button">Återställ standard</button>
         </div>
+
+        <div class="card data-actions">
+          <h3>Säkerhetskopiera</h3>
+          <p class="field-hint">Personer, regler och resor sparas bara i den här webbläsaren, på den här enheten. Exportera för att säkerhetskopiera eller flytta data till en annan enhet.</p>
+          <div class="data-actions-grid">
+            <button id="exportRulesButton" class="secondary-button" type="button">Exportera regler</button>
+            <button id="importRulesButton" class="secondary-button" type="button">Importera regler</button>
+            <button id="exportAllButton" class="secondary-button" type="button">Exportera all data</button>
+            <button id="importAllButton" class="secondary-button" type="button">Importera all data</button>
+            <button id="clearRulesButton" class="ghost-button danger-text" type="button">Rensa alla regler</button>
+          </div>
+          <input id="importRulesFile" type="file" accept="application/json" class="hidden" />
+          <input id="importAllFile" type="file" accept="application/json" class="hidden" />
+          <div id="dataActionMessage" class="message hidden" role="status"></div>
+        </div>
+
         <div id="ruleValidationSummary" class="message error hidden"></div>
+        <div id="rulesEmptyState" class="card empty-state hidden">
+          <p><strong>Inga regler ännu.</strong></p>
+          <p>Lägg till regler manuellt med knappen ”+ Ny regel” ovan, eller importera en tidigare export av dina regler.</p>
+        </div>
         <div id="rulesList" class="rules-list"></div>
       </section>
     </main>
@@ -196,12 +222,26 @@
         <button class="icon-button delete-rule" type="button" aria-label="Ta bort regel">×</button>
       </div>
       <div class="rule-fields">
-        <label>Person<select class="rule-person"><option>Kajsa</option><option>Isolde</option></select></label>
+        <label>Person<select class="rule-person"></select></label>
         <label>Var<input class="rule-where" /></label>
         <label class="wide">When<input class="rule-when code-input" spellcheck="false" /></label>
         <label class="wide">Quantity<input class="rule-quantity code-input" spellcheck="false" /></label>
       </div>
       <div class="rule-error hidden"></div>
+    </article>
+  </template>
+
+  <template id="personTemplate">
+    <article class="person-card card">
+      <div class="person-card-top">
+        <input class="person-name" aria-label="Namn" placeholder="Namn" />
+        <button class="icon-button delete-person" type="button" aria-label="Ta bort person">×</button>
+      </div>
+      <div class="person-fields">
+        <label class="person-toggle"><input type="radio" name="ownerRadio" class="person-owner" /><span>Ägare (du)</span></label>
+        <label class="person-toggle"><input type="checkbox" class="person-can-own" /><span>Kan äga packsaker</span></label>
+        <label class="person-toggle"><input type="checkbox" class="person-can-travel" /><span>Kan väljas som reskamrat</span></label>
+      </div>
     </article>
   </template>
 

@@ -64,6 +64,11 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px r
 .hidden { display: none !important; }
 .message { padding: 11px 13px; border-radius: 12px; font-size: .84rem; }
 .message.error { background: #f9e6e3; color: #712017; }
+.message.success { background: var(--accent-soft); color: var(--accent); }
+.message.warning { background: #fbf0d6; color: #6b5518; }
+.empty-state { padding: 18px; color: var(--muted); }
+.empty-state p { margin-bottom: 8px; }
+.empty-state p:last-child { margin-bottom: 0; }
 
 .recent-trips { display: grid; gap: 8px; }
 .recent-trip { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
@@ -91,12 +96,24 @@ input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px r
 .extra-form h3 { margin-bottom: 12px; }
 .extra-grid { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 8px; }
 
+.people-section { padding: 16px; display: grid; gap: 10px; margin-bottom: 12px; }
+.people-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.people-list { display: grid; gap: 10px; }
+.person-card { padding: 13px; }
+.person-card-top { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.person-name { font-size: 1rem; font-weight: 800; border: 0; background: transparent; padding-left: 0; }
+.person-fields { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+.person-toggle { display: flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 600; color: var(--muted); }
+.person-toggle input { width: 18px; height: 18px; min-height: 0; accent-color: var(--accent); }
+
 .rule-help { padding: 0 16px; margin-bottom: 12px; }
 .rule-help summary { cursor: pointer; padding: 15px 0; font-weight: 800; }
 .rule-help p { color: var(--muted); font-size: .85rem; line-height: 1.5; }
 code { background: var(--surface-2); border-radius: 5px; padding: 2px 4px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .92em; }
 .settings-toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
 .settings-toolbar input { flex: 1; }
+.data-actions { padding: 16px; display: grid; gap: 10px; margin-bottom: 12px; }
+.data-actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
 .rules-list { display: grid; gap: 10px; }
 .rule-card { padding: 13px; }
 .rule-card-top { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }

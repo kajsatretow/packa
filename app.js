@@ -1,12 +1,16 @@
 const STORAGE = {
   rules: 'packa.rules.v1',
   trips: 'packa.trips.v1',
-  activeTrip: 'packa.activeTrip.v1'
+  activeTrip: 'packa.activeTrip.v1',
+  people: 'packa.people.v1'
 };
+
+const OTHER_TRAVELER = 'Annan vuxen';
 
 const state = {
   rules: [],
   trips: [],
+  people: [],
   activeTripId: null,
   installPrompt: null,
   currentView: 'trip'
@@ -20,23 +24,21 @@ const escapeHtml = s => String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','
 function saveState() {
   localStorage.setItem(STORAGE.rules, JSON.stringify(state.rules));
   localStorage.setItem(STORAGE.trips, JSON.stringify(state.trips));
+  localStorage.setItem(STORAGE.people, JSON.stringify(state.people));
   if (state.activeTripId) localStorage.setItem(STORAGE.activeTrip, state.activeTripId);
   else localStorage.removeItem(STORAGE.activeTrip);
 }
 
-async function loadState() {
+function loadState() {
   const storedRules = localStorage.getItem(STORAGE.rules);
-  if (storedRules) {
-    state.rules = JSON.parse(storedRules);
-  } else {
-    const response = await fetch('./default-rules.json');
-    state.rules = await response.json();
-    localStorage.setItem(STORAGE.rules, JSON.stringify(state.rules));
-  }
+  state.rules = storedRules ? JSON.parse(storedRules) : [];
   state.trips = JSON.parse(localStorage.getItem(STORAGE.trips) || '[]');
+  state.people = JSON.parse(localStorage.getItem(STORAGE.people) || '[]');
   state.activeTripId = localStorage.getItem(STORAGE.activeTrip);
   if (state.activeTripId && !state.trips.some(t => t.id === state.activeTripId)) state.activeTripId = null;
 }
+
+function personByName(name) { return state.people.find(p => p.name === name) || null; }
 
 // ----- Expression parser: deliberately small and safe; no eval/new Function. -----
 class ExprParser {
@@ -283,7 +285,8 @@ function generateItems(trip) {
   const errors = [];
 
   for (const rule of state.rules) {
-    if (rule.person === 'Isolde' && !trip.travelers.includes('Isolde')) continue;
+    const owner = rule.person ? personByName(rule.person) : null;
+    if (owner && !owner.isOwner && !trip.travelers.includes(owner.name)) continue;
     if (!trip.weather?.available && conditionNeedsWeather(rule.when)) { skippedWeather.push(rule); continue; }
     try {
       const include = Boolean(evaluateExpression(rule.when || 'always', ctx));
@@ -321,7 +324,7 @@ function showView(view) {
   $$('.view').forEach(v => v.classList.toggle('active', v.id === `view-${view}`));
   $$('.nav-button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
   if (view === 'list') renderPackingList();
-  if (view === 'settings') renderRules();
+  if (view === 'settings') { renderPeople(); renderRules(); }
   if (view === 'trip') renderRecentTrips();
   window.scrollTo({top:0, behavior:'instant'});
 }
@@ -384,7 +387,7 @@ async function handleTripSubmit(event) {
       departureDate: start,
       returnDate: end,
       nights,
-      travelers: $$('input[name=travelers]:checked').map(x => x.value),
+      travelers: $$('input[name=travelers]:checked').map(x => x.value).filter(Boolean),
       accommodation: $('#accommodation').value,
       linensProvided: $('#accommodation').value === 'cabin_airbnb' ? $('#linensProvided').value === 'true' : true,
       transportMode: $('#transportMode').value,
@@ -434,7 +437,7 @@ function renderPackingList() {
     groups.get(key).push(item);
   });
 
-  const preferredOrder = ['Garderoben','Byrån','Badrummet','Sovrummet','Isoldes rum','Köket','Hallen','Övrigt'];
+  const preferredOrder = ['Garderoben','Byrån','Badrummet','Sovrummet','Köket','Hallen','Övrigt'];
   const ordered = [...groups.entries()].sort(([a],[b]) => {
     const ia = preferredOrder.indexOf(a), ib = preferredOrder.indexOf(b);
     return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.localeCompare(b, 'sv');
@@ -448,7 +451,7 @@ function renderPackingList() {
           <input type="checkbox" ${item.checked ? 'checked' : ''} />
           <span class="item-main">
             <span class="item-name">${escapeHtml(item.item)}</span>
-            <span class="item-meta"><span class="badge">${escapeHtml(item.person)}</span>${item.extra ? '<span class="badge">Extra</span>' : ''}</span>
+            <span class="item-meta">${item.person ? `<span class="badge">${escapeHtml(item.person)}</span>` : ''}${item.extra ? '<span class="badge">Extra</span>' : ''}</span>
           </span>
           ${item.extra ? '<button class="remove-extra" type="button" aria-label="Ta bort">×</button>' : `<span class="quantity">${item.quantity > 1 ? `×${escapeHtml(formatQuantity(item.quantity))}` : ''}</span>`}
         </label>`).join('')}
@@ -515,6 +518,31 @@ function populateWhereOptions() {
   if (values.includes(current)) select.value = current;
 }
 
+function personOptionsHtml(selected) {
+  const owners = state.people.filter(p => p.canOwnItems).map(p => p.name).filter(Boolean).sort((a,b)=>a.localeCompare(b,'sv'));
+  let html = '<option value="">– Ingen –</option>';
+  html += owners.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+  if (selected && !owners.includes(selected)) html += `<option value="${escapeHtml(selected)}">${escapeHtml(selected)} (ej konfigurerad)</option>`;
+  return html;
+}
+function populateExtraItemPersonOptions() {
+  const select = $('#extraItemPerson');
+  const current = select.value;
+  select.innerHTML = personOptionsHtml(current);
+  select.value = current;
+}
+
+function renderTravelerChoices() {
+  const container = $('#travelersChoices');
+  const previouslyChecked = new Set($$('input[name=travelers]:checked', container).map(x => x.value));
+  const travelers = state.people.filter(p => p.canTravel && !p.isOwner && p.name);
+  container.innerHTML = travelers.map(p => `
+    <label class="choice"><input type="checkbox" name="travelers" value="${escapeHtml(p.name)}" /><span>${escapeHtml(p.name)}</span></label>`).join('')
+    + `<label class="choice"><input type="checkbox" name="travelers" value="${escapeHtml(OTHER_TRAVELER)}" /><span>${escapeHtml(OTHER_TRAVELER)}</span></label>`;
+  $$('input[name=travelers]', container).forEach(x => { if (previouslyChecked.has(x.value)) x.checked = true; });
+  $('#travelersHint').classList.toggle('hidden', travelers.length > 0);
+}
+
 function renderRecentTrips() {
   const container = $('#recentTrips'), section = $('#recentTripsSection');
   if (!state.trips.length) { section.classList.add('hidden'); return; }
@@ -537,16 +565,87 @@ function editActiveTrip() {
   fillFormFromTrip(trip); $('#tripForm').dataset.editingId=trip.id; showView('trip');
 }
 
-// ----- Settings -----
+// ----- Settings: People -----
+function unconfiguredPersonNames(){
+  const known = new Set(state.people.map(p => p.name));
+  return [...new Set(state.rules.map(r => r.person).filter(Boolean))].filter(name => !known.has(name));
+}
+function renderUnconfiguredPeopleWarning(){
+  const el = $('#unconfiguredPeopleWarning');
+  const names = unconfiguredPersonNames();
+  if (!names.length) { el.classList.add('hidden'); return; }
+  el.textContent = names.length === 1
+    ? `1 person i dina regler är inte konfigurerad ännu: ${names[0]}. Lägg till personen nedan så filtreras dess saker automatiskt efter vem som reser med.`
+    : `${names.length} personer i dina regler är inte konfigurerade ännu: ${names.join(', ')}. Lägg till dem nedan så filtreras deras saker automatiskt efter vem som reser med.`;
+  el.classList.remove('hidden');
+}
+function renderNoOwnerWarning(){
+  const el = $('#noOwnerWarning');
+  const show = state.people.length > 0 && !state.people.some(p => p.isOwner);
+  if (show) {
+    el.textContent = 'Ingen av dina personer är markerad som ägare. Markera en person som "Ägare (du)" nedan – annars fungerar inte den automatiska filtreringen av packsaker per reskamrat korrekt.';
+  }
+  el.classList.toggle('hidden', !show);
+}
+function renderPeople(){
+  const list = $('#peopleList');
+  $('#peopleEmptyState').classList.toggle('hidden', state.people.length > 0);
+  list.innerHTML = '';
+  const tpl = $('#personTemplate');
+  for (const person of state.people) {
+    const node = tpl.content.firstElementChild.cloneNode(true); node.dataset.id = person.id;
+    $('.person-name',node).value = person.name;
+    $('.person-owner',node).checked = Boolean(person.isOwner);
+    $('.person-can-own',node).checked = Boolean(person.canOwnItems);
+    $('.person-can-travel',node).checked = Boolean(person.canTravel);
+    $('.person-name',node).addEventListener('change', () => updatePersonFromCard(node));
+    $('.person-owner',node).addEventListener('change', () => setOwner(person.id));
+    $('.person-can-own',node).addEventListener('change', () => updatePersonFromCard(node));
+    $('.person-can-travel',node).addEventListener('change', () => updatePersonFromCard(node));
+    $('.delete-person',node).addEventListener('click', () => deletePerson(person.id));
+    list.appendChild(node);
+  }
+  renderTravelerChoices();
+  populateExtraItemPersonOptions();
+  renderUnconfiguredPeopleWarning();
+  renderNoOwnerWarning();
+}
+function updatePersonFromCard(node){
+  const p = state.people.find(x=>x.id===node.dataset.id); if(!p) return;
+  p.name = $('.person-name',node).value.trim();
+  p.canOwnItems = $('.person-can-own',node).checked;
+  p.canTravel = $('.person-can-travel',node).checked;
+  saveState(); renderPeople(); renderRules();
+}
+function setOwner(id){
+  state.people.forEach(p => { p.isOwner = (p.id === id); });
+  saveState(); renderPeople(); renderRules();
+}
+function addPerson(){
+  const person = {id:`person:${uid()}`, name:'', isOwner: state.people.length===0, canOwnItems:true, canTravel:true};
+  state.people.push(person); saveState(); renderPeople();
+  $(`.person-card[data-id="${person.id}"] .person-name`)?.focus();
+}
+function deletePerson(id){
+  const p = state.people.find(x=>x.id===id); if(!p) return;
+  if(!confirm(`Ta bort ${p.name || 'personen'}?`)) return;
+  state.people = state.people.filter(x=>x.id!==id);
+  saveState(); renderPeople(); renderRules();
+}
+
+// ----- Settings: Rules -----
 function renderRules() {
   const list = $('#rulesList');
   const q = $('#ruleSearch').value.trim().toLowerCase();
   const filtered = state.rules.filter(r => !q || [r.item,r.person,r.when,r.quantity,r.where].some(v => String(v||'').toLowerCase().includes(q)));
-  list.innerHTML='';
+  $('#rulesEmptyState').classList.toggle('hidden', state.rules.length > 0);
+  list.innerHTML = (!filtered.length && state.rules.length) ? '<p class="field-hint">Inga regler matchar sökningen.</p>' : '';
   const tpl=$('#ruleTemplate');
   for(const rule of filtered){
     const node=tpl.content.firstElementChild.cloneNode(true); node.dataset.id=rule.id;
-    $('.rule-item',node).value=rule.item; $('.rule-person',node).value=rule.person; $('.rule-where',node).value=rule.where; $('.rule-when',node).value=rule.when; $('.rule-quantity',node).value=rule.quantity;
+    $('.rule-item',node).value=rule.item;
+    $('.rule-person',node).innerHTML=personOptionsHtml(rule.person); $('.rule-person',node).value=rule.person||'';
+    $('.rule-where',node).value=rule.where; $('.rule-when',node).value=rule.when; $('.rule-quantity',node).value=rule.quantity;
     ['.rule-item','.rule-person','.rule-where','.rule-when','.rule-quantity'].forEach(sel => $(sel,node).addEventListener('change',()=>updateRuleFromCard(node)));
     $('.rule-when',node).addEventListener('input',()=>validateRuleCard(node));
     $('.rule-quantity',node).addEventListener('input',()=>validateRuleCard(node));
@@ -554,13 +653,14 @@ function renderRules() {
     list.appendChild(node); validateRuleCard(node);
   }
   validateAllRules();
+  renderUnconfiguredPeopleWarning();
 }
 function updateRuleFromCard(card){
   const r=state.rules.find(x=>x.id===card.dataset.id); if(!r)return;
-  r.item=$('.rule-item',card).value.trim(); r.person=$('.rule-person',card).value; r.where=$('.rule-where',card).value.trim()||'Övrigt'; r.when=$('.rule-when',card).value.trim()||'always'; r.quantity=$('.rule-quantity',card).value.trim()||'1'; saveState(); validateRuleCard(card); validateAllRules();
+  r.item=$('.rule-item',card).value.trim(); r.person=$('.rule-person',card).value; r.where=$('.rule-where',card).value.trim()||'Övrigt'; r.when=$('.rule-when',card).value.trim()||'always'; r.quantity=$('.rule-quantity',card).value.trim()||'1'; saveState(); validateRuleCard(card); validateAllRules(); renderUnconfiguredPeopleWarning();
 }
 function validationContext(){
-  return {vars:{always:true,nights:3,destination:'Lund',abroad:false,season:'summer',transport_mode:'car',travel_hours:4,accommodation:'hotel',accommodation_type:'hotel',linens_provided:true,period:false,fertile_days:false,min_day_temp:10,max_day_temp:22,min_temp:10,max_temp:22,rainy:false,sunny:true},functions:{activity:()=>false,traveler:()=>false,trip_has_weekday:()=>false,ceil:Math.ceil,floor:Math.floor,round:Math.round,min:Math.min,max:Math.max}};
+  return {vars:{always:true,nights:3,destination:'Exempelstad',abroad:false,season:'summer',transport_mode:'car',travel_hours:4,accommodation:'hotel',accommodation_type:'hotel',linens_provided:true,period:false,fertile_days:false,min_day_temp:10,max_day_temp:22,min_temp:10,max_temp:22,rainy:false,sunny:true},functions:{activity:()=>false,traveler:()=>false,trip_has_weekday:()=>false,ceil:Math.ceil,floor:Math.floor,round:Math.round,min:Math.min,max:Math.max}};
 }
 function validateRule(rule){
   const errors=[]; try{ evaluateExpression(rule.when||'always',validationContext()); }catch(e){ errors.push(`When: ${e.message}`); }
@@ -576,11 +676,118 @@ function validateAllRules(){
   else el.classList.add('hidden');
 }
 function addRule(){
-  const rule={id:`custom:${uid()}`,item:'Ny sak',person:'Kajsa',when:'always',quantity:'1',where:'Övrigt'}; state.rules.unshift(rule); saveState(); $('#ruleSearch').value=''; renderRules(); $('#rulesList .rule-item')?.focus();
+  const rule={id:`custom:${uid()}`,item:'Ny sak',person:'',when:'always',quantity:'1',where:'Övrigt'}; state.rules.unshift(rule); saveState(); $('#ruleSearch').value=''; renderRules(); $('#rulesList .rule-item')?.focus();
 }
-async function resetRules(){
-  if(!confirm('Återställa hela masterlistan till standard? Dina regeländringar försvinner.'))return;
-  const response=await fetch('./default-rules.json',{cache:'no-store'}); state.rules=await response.json(); saveState(); renderRules();
+function clearAllRules(){
+  if(!state.rules.length) return;
+  if(!confirm(`Ta bort alla ${state.rules.length} regler? Exportera först om du vill kunna återställa dem.`)) return;
+  state.rules=[]; saveState(); renderRules();
+}
+
+// ----- Import / export -----
+function downloadJson(filename, data){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+function timestampForFilename(){ return new Date().toISOString().slice(0,10); }
+function showDataMessage(msg,isError=false){
+  const el=$('#dataActionMessage'); el.textContent=msg; el.classList.remove('hidden'); el.classList.toggle('error',isError); el.classList.toggle('success',!isError);
+}
+function normalizeImportedRules(data){
+  if(!Array.isArray(data)) throw new Error('Filen måste innehålla en lista med regler.');
+  return data.map((r,idx)=>{
+    if(typeof r!=='object'||r===null||Array.isArray(r)) throw new Error(`Regel ${idx+1} är inte ett giltigt objekt.`);
+    const item=typeof r.item==='string'?r.item.trim():'';
+    if(!item) throw new Error(`Regel ${idx+1} saknar ett giltigt "item".`);
+    const person=typeof r.person==='string'?r.person.trim():'';
+    const when=typeof r.when==='string'&&r.when.trim()?r.when.trim():'always';
+    const quantity=(typeof r.quantity==='string'||typeof r.quantity==='number')?String(r.quantity):'1';
+    const where=typeof r.where==='string'&&r.where.trim()?r.where.trim():'Övrigt';
+    const id=typeof r.id==='string'&&r.id?r.id:`custom:${uid()}`;
+    return {id,item,person,when,quantity,where};
+  });
+}
+function normalizeImportedTrips(data){
+  if(!Array.isArray(data)) throw new Error('Resor måste vara en lista.');
+  return data.map((t,idx)=>{
+    if(typeof t!=='object'||t===null||Array.isArray(t)) throw new Error(`Resa ${idx+1} är ogiltig.`);
+    if(typeof t.id!=='string'||!t.id) throw new Error(`Resa ${idx+1} saknar id.`);
+    if(typeof t.destination!=='string') throw new Error(`Resa ${idx+1} saknar destination.`);
+    if(typeof t.departureDate!=='string'||typeof t.returnDate!=='string') throw new Error(`Resa ${idx+1} saknar datum.`);
+    return {
+      ...t,
+      travelers: Array.isArray(t.travelers) ? t.travelers : [],
+      items: Array.isArray(t.items) ? t.items : [],
+      manualItems: Array.isArray(t.manualItems) ? t.manualItems : []
+    };
+  });
+}
+function normalizeImportedPeople(data){
+  if(!Array.isArray(data)) throw new Error('Personer måste vara en lista.');
+  let ownerAssigned=false;
+  return data.map((p,idx)=>{
+    if(typeof p!=='object'||p===null||Array.isArray(p)) throw new Error(`Person ${idx+1} är inte ett giltigt objekt.`);
+    const name=typeof p.name==='string'?p.name.trim():'';
+    if(!name) throw new Error(`Person ${idx+1} saknar namn.`);
+    const wantsOwner=Boolean(p.isOwner);
+    const isOwner = wantsOwner && !ownerAssigned ? (ownerAssigned=true, true) : false;
+    const canOwnItems = p.canOwnItems!==undefined ? Boolean(p.canOwnItems) : true;
+    const canTravel = p.canTravel!==undefined ? Boolean(p.canTravel) : true;
+    const id=typeof p.id==='string'&&p.id?p.id:`person:${uid()}`;
+    return {id,name,isOwner,canOwnItems,canTravel};
+  });
+}
+function exportRules(){
+  if(!state.rules.length){ showDataMessage('Inga regler att exportera ännu.', true); return; }
+  downloadJson(`packa-regler-${timestampForFilename()}.json`, state.rules);
+  showDataMessage(`${state.rules.length} regler exporterade.`);
+}
+function importRulesFromFile(file){
+  const reader=new FileReader();
+  reader.onerror=()=>showDataMessage('Kunde inte läsa filen.', true);
+  reader.onload=()=>{
+    let rules;
+    try{ rules=normalizeImportedRules(JSON.parse(reader.result)); }
+    catch(err){ showDataMessage(`Kunde inte importera regler: ${err.message}`, true); return; }
+    if(state.rules.length && !confirm(`Ersätta ${state.rules.length} befintliga regler med ${rules.length} importerade regler?`)) return;
+    state.rules=rules; saveState(); renderRules(); populateWhereOptions();
+    const unconfigured=unconfiguredPersonNames();
+    showDataMessage(`${rules.length} regler importerade.`+(unconfigured.length?` Obs: ${unconfigured.length} person(er) i importen är inte konfigurerade ännu: ${unconfigured.join(', ')}. Lägg till dem under Personer.`:''));
+  };
+  reader.readAsText(file);
+}
+function exportAllData(){
+  downloadJson(`packa-data-${timestampForFilename()}.json`, {
+    schema:'packa-backup', version:1, exportedAt:new Date().toISOString(),
+    rules: state.rules, trips: state.trips, people: state.people, activeTripId: state.activeTripId
+  });
+  showDataMessage('All data exporterad.');
+}
+function importAllDataFromFile(file){
+  const reader=new FileReader();
+  reader.onerror=()=>showDataMessage('Kunde inte läsa filen.', true);
+  reader.onload=()=>{
+    let nextRules, nextTrips, nextPeople, nextActiveTripId;
+    try{
+      const data=JSON.parse(reader.result);
+      if(typeof data!=='object'||data===null||Array.isArray(data)) throw new Error('Filen har fel format.');
+      nextRules = data.rules!==undefined ? normalizeImportedRules(data.rules) : state.rules;
+      nextTrips = data.trips!==undefined ? normalizeImportedTrips(data.trips) : state.trips;
+      nextPeople = data.people!==undefined ? normalizeImportedPeople(data.people) : state.people;
+      nextActiveTripId = typeof data.activeTripId==='string' ? data.activeTripId : null;
+    }catch(err){ showDataMessage(`Kunde inte importera data: ${err.message}`, true); return; }
+    if((state.rules.length||state.trips.length||state.people.length) && !confirm('Ersätta all befintlig data (regler, resor och personer) med data från filen?')) return;
+    state.rules=nextRules; state.trips=nextTrips; state.people=nextPeople; state.activeTripId=nextActiveTripId;
+    if(state.activeTripId && !state.trips.some(t=>t.id===state.activeTripId)) state.activeTripId=null;
+    saveState();
+    renderPeople(); renderRules(); renderRecentTrips(); populateWhereOptions();
+    if(state.currentView==='list') renderPackingList();
+    showDataMessage('All data importerad.');
+  };
+  reader.readAsText(file);
 }
 
 function registerInstall() {
@@ -595,12 +802,19 @@ function bindEvents(){
   $('#extraItemForm').addEventListener('submit',handleExtraItem);
   $('#editTripButton').addEventListener('click',editActiveTrip);
   $('#addRuleButton').addEventListener('click',addRule);
+  $('#addPersonButton').addEventListener('click',addPerson);
   $('#ruleSearch').addEventListener('input',renderRules);
-  $('#resetRulesButton').addEventListener('click',resetRules);
+  $('#clearRulesButton').addEventListener('click',clearAllRules);
+  $('#exportRulesButton').addEventListener('click',exportRules);
+  $('#importRulesButton').addEventListener('click',()=>$('#importRulesFile').click());
+  $('#importRulesFile').addEventListener('change',e=>{ const f=e.target.files[0]; if(f) importRulesFromFile(f); e.target.value=''; });
+  $('#exportAllButton').addEventListener('click',exportAllData);
+  $('#importAllButton').addEventListener('click',()=>$('#importAllFile').click());
+  $('#importAllFile').addEventListener('change',e=>{ const f=e.target.files[0]; if(f) importAllDataFromFile(f); e.target.value=''; });
 }
 
-async function init(){
-  await loadState(); bindEvents(); registerInstall(); populateWhereOptions(); renderRecentTrips();
+function init(){
+  loadState(); bindEvents(); registerInstall(); populateWhereOptions(); renderTravelerChoices(); populateExtraItemPersonOptions(); renderRecentTrips();
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 }
 
